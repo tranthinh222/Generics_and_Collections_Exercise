@@ -8,6 +8,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -15,6 +16,7 @@ public class LibraryManagementSystem extends JFrame {
     private JPanel contentPanel;
     private CardLayout cardLayout;
     private LoginPanel loginPanel;
+    private LibrarianManagement librarianManagement;
 
     public LibraryManagementSystem() {
         this.setTitle("Library Management System");
@@ -74,6 +76,8 @@ public class LibraryManagementSystem extends JFrame {
         this.add(panel);
         this.setVisible(true);
 
+        librarianManagement = new LibrarianManagement();
+        librarianManagement.loadLibrarianListFromFile();
         btn1.addActionListener(l -> this.cardLayout.show(contentPanel, "Login"));
 
         loginPanel.loginButton.addActionListener(l -> {
@@ -92,10 +96,13 @@ public class LibraryManagementSystem extends JFrame {
             if (password.length() < 6)
                 loginPanel.showError("Password phải >= 6 ký tự!");
 
-            LibrarianManagement librarianManagement = new LibrarianManagement();
-            librarianManagement.loadLibrarianListFromFile();
+            
             if (librarianManagement.checkValidAccount(name, password)) {
                 this.remove(btn1);
+                JOptionPane.showMessageDialog(this, "Đăng nhập thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else {
+                loginPanel.showError("Username hoặc password không đúng!");
             }
 
         });

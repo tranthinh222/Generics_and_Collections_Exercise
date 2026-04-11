@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -77,7 +78,7 @@ public class CreateAccountDiaLog extends JDialog{
         panel.add(buttonPanel);
         this.add(panel);
         this.createdButton.addActionListener(l ->{
-            
+            this.checkValidInformationAndCreate();
         });
 
         this.canceledButton.addActionListener(l -> {
@@ -144,22 +145,31 @@ public class CreateAccountDiaLog extends JDialog{
         this.errorJLabel.setText("");
     }
 
-    public void checkValidInformation(){
+
+    public void checkValidInformationAndCreate(){
         String username = this.getUsername();
         String password = this.getPassword();
         String confirmPassword = this.getConfirmPassword();
 
         if (username == null)
-            this.showError("Username không được trống");
+            this.showError("Username không được trống!");
 
         if (password == null)
-            this.showError("Password không được trống");
+            this.showError("Password không được trống!");
+
+        if (password.length() < 6)
+            this.showError("Password phải >= 6 ký tự!");
 
         if (confirmPassword == null)
-            this.showError("Confirm Password không được trống");
+            this.showError("Confirm Password không được trống!");
 
+        if (password.equals(confirmPassword))
+            this.showError("Password và Confirm Password không giống nhau!");
         
+        this.isCreated = true;
+        JOptionPane.showMessageDialog(this, "Tài khoản tạo thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
 
+        dispose();
     }
 
     // public static void main(String[] args) {
