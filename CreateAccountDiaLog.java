@@ -21,7 +21,8 @@ public class CreateAccountDiaLog extends JDialog{
     private JPasswordField confirmPasswordField;
     private JButton createdButton;
     private JButton canceledButton;
-    private boolean isCreated;
+    private JLabel errorJLabel;
+    private boolean isCreated = false;
     
     public CreateAccountDiaLog(){
         this.setTitle("Create Account");
@@ -39,6 +40,13 @@ public class CreateAccountDiaLog extends JDialog{
         iconLabel.setAlignmentX(CENTER_ALIGNMENT);
         panel.add(iconLabel);
         panel.add(Box.createVerticalStrut(15));
+
+        this.errorJLabel = new JLabel();
+        this.errorJLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.errorJLabel.setForeground(Color.RED);
+        this.errorJLabel.setAlignmentX(CENTER_ALIGNMENT);
+        panel.add(errorJLabel);
+        panel.add(Box.createVerticalStrut(5));
 
         Font labelFont = new Font("Arial", Font.BOLD, 14);
         Font inputFont = new Font("Arial", Font.PLAIN, 14);
@@ -69,8 +77,7 @@ public class CreateAccountDiaLog extends JDialog{
         panel.add(buttonPanel);
         this.add(panel);
         this.createdButton.addActionListener(l ->{
-            this.isCreated = true;
-            dispose();
+            
         });
 
         this.canceledButton.addActionListener(l -> {
@@ -117,23 +124,57 @@ public class CreateAccountDiaLog extends JDialog{
         return new String(this.passwordField.getPassword());
     }
 
+    public String getConfirmPassword(){
+        return new String(this.confirmPasswordField.getPassword());
+    }
+
     public void setCreated(boolean created){
         this.isCreated = created;
     }
 
-    public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Preview - CreateAccountDiaLog");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(new Dimension(600, 400));
-            frame.setLocationRelativeTo(null);
-            frame.getContentPane().setBackground(Color.WHITE);
-            frame.setVisible(true);
-
-            CreateAccountDiaLog dialog = new CreateAccountDiaLog();
-            dialog.setModal(false);
-            dialog.setLocationRelativeTo(frame);
-            dialog.setVisible(true);
-        });
+    public boolean isCreated(){
+        return this.isCreated;
     }
+
+    public void showError(String message){
+        this.errorJLabel.setText(message);
+    }
+
+    public void clearError(){
+        this.errorJLabel.setText("");
+    }
+
+    public void checkValidInformation(){
+        String username = this.getUsername();
+        String password = this.getPassword();
+        String confirmPassword = this.getConfirmPassword();
+
+        if (username == null)
+            this.showError("Username không được trống");
+
+        if (password == null)
+            this.showError("Password không được trống");
+
+        if (confirmPassword == null)
+            this.showError("Confirm Password không được trống");
+
+        
+
+    }
+
+    // public static void main(String[] args) {
+    //     javax.swing.SwingUtilities.invokeLater(() -> {
+    //         JFrame frame = new JFrame("Preview - CreateAccountDiaLog");
+    //         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    //         frame.setSize(new Dimension(600, 400));
+    //         frame.setLocationRelativeTo(null);
+    //         frame.getContentPane().setBackground(Color.WHITE);
+    //         frame.setVisible(true);
+
+    //         CreateAccountDiaLog dialog = new CreateAccountDiaLog();
+    //         dialog.setModal(false);
+    //         dialog.setLocationRelativeTo(frame);
+    //         dialog.setVisible(true);
+    //     });
+    // }
 }

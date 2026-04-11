@@ -4,10 +4,11 @@ import java.awt.*;
 
 
 public class LoginPanel extends JPanel{
-    private JTextField usernameField;
-    private JPasswordField passwordField;
-    private JButton createdButton;
-    private JButton loginButton;
+    public JTextField usernameField;
+    public JPasswordField passwordField;
+    public JButton createdButton;
+    public JButton loginButton;
+    private JLabel errorJLabel;
     
     public String getUsername(){
         return this.usernameField.getText();
@@ -32,6 +33,13 @@ public class LoginPanel extends JPanel{
         iconLabel.setAlignmentX(CENTER_ALIGNMENT);
         mainPanel.add(iconLabel);
         mainPanel.add(Box.createVerticalStrut(30));
+
+        this.errorJLabel = new JLabel();
+        this.errorJLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.errorJLabel.setForeground(Color.RED);
+        this.errorJLabel.setAlignmentX(CENTER_ALIGNMENT);
+        mainPanel.add(errorJLabel);
+        mainPanel.add(Box.createVerticalStrut(5));
 
         JPanel userPanel = new JPanel();
         userPanel.setLayout(new BorderLayout());
@@ -71,8 +79,8 @@ public class LoginPanel extends JPanel{
         buttonJPanel.setLayout(new GridLayout(1, 2, 10, 0));
         buttonJPanel.setBackground(Color.WHITE);
         buttonJPanel.setMaximumSize(new Dimension(330, 40));
-        this.createdButton = createButton("Login");
-        this.loginButton = createButton("Create Account");
+        this.loginButton = createButton("Login");
+        this.createdButton = createButton("Create Account");
         buttonJPanel.add(this.createdButton);
         buttonJPanel.add(this.loginButton);
         mainPanel.add(buttonJPanel);
@@ -90,6 +98,14 @@ public class LoginPanel extends JPanel{
         newButton.setFocusPainted(false);
 
         return newButton;
+    }
+
+    public void showError(String message){
+        this.errorJLabel.setText(message);
+    }
+
+    public void clearError(){
+        this.errorJLabel.setText("");
     }
 
     // public static void main(String[] args) {

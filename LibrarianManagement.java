@@ -37,5 +37,12 @@ public class LibrarianManagement {
         this.saveLibrarianListToFile();
     }
 
-    
+    public boolean checkValidAccount(String username, String password){
+        if (this.librarians != null)
+            return false;
+        String tmp = this.librarians.get(username);
+        if (tmp != null && tmp.equals(password))
+            return true;
+        return false;
+    }
 }
