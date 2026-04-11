@@ -80,7 +80,7 @@ public class LoginPanel extends JPanel{
         buttonJPanel.setBackground(Color.WHITE);
         buttonJPanel.setMaximumSize(new Dimension(330, 40));
         this.loginButton = createButton("Login");
-        this.createdButton = createButton("Create Account");
+        this.createdButton = createButton("Register");
         buttonJPanel.add(this.createdButton);
         buttonJPanel.add(this.loginButton);
         mainPanel.add(buttonJPanel);

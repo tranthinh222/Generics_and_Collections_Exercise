@@ -150,23 +150,51 @@ public class CreateAccountDiaLog extends JDialog{
         String username = this.getUsername();
         String password = this.getPassword();
         String confirmPassword = this.getConfirmPassword();
+        LibrarianManagement librarianManagement = new LibrarianManagement();
+        librarianManagement.loadLibrarianListFromFile();
 
         if (username == null)
+        {
             this.showError("Username không được trống!");
+            return;
+        }
+            
 
         if (password == null)
+        {
             this.showError("Password không được trống!");
+            return;
+        }
+            
 
         if (password.length() < 6)
+        {
             this.showError("Password phải >= 6 ký tự!");
+            return;
+        }
+            
 
         if (confirmPassword == null)
+        {
             this.showError("Confirm Password không được trống!");
+            return;
+        }
 
         if (password.equals(confirmPassword))
+        {
             this.showError("Password và Confirm Password không giống nhau!");
-        
+            return;
+        }
+            
+        if (librarianManagement.isDuplicatedAccount(username, password))
+        {
+            this.showError("Tên tài khoản đã tồn tại");
+            return;
+        }
+            
         this.isCreated = true;
+        librarianManagement.addLibrarian(username, password);
+        librarianManagement.saveLibrarianListToFile();
         JOptionPane.showMessageDialog(this, "Tài khoản tạo thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
 
         dispose();

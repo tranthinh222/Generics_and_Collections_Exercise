@@ -33,15 +33,28 @@ public class LibrarianManagement {
     }
 
     public void addLibrarian(String username, String password){
+        if (this.librarians == null)
+        {
+            this.librarians = new HashMap<>();
+        }
         this.librarians.put(username, password);
         this.saveLibrarianListToFile();
     }
 
     public boolean checkValidAccount(String username, String password){
-        if (this.librarians != null)
+        if (this.librarians == null)
             return false;
         String tmp = this.librarians.get(username);
         if (tmp != null && tmp.equals(password))
+            return true;
+        return false;
+    }
+    
+    public boolean isDuplicatedAccount(String username, String password){
+        if (this.librarians == null)
+            return false;
+
+        if (this.librarians.get(username) != null)
             return true;
         return false;
     }
