@@ -16,11 +16,13 @@ public class LibraryManagementSystem extends JFrame {
     private JPanel contentPanel;
     private CardLayout cardLayout;
     private LoginPanel loginPanel;
+    private ReaderManagementPanel readerManagementPanel;
     private LibrarianManagement librarianManagement;
+    private ReaderManagement readerManagement;
 
     public LibraryManagementSystem() {
         this.setTitle("Library Management System");
-        this.setSize(700, 600);
+        this.setSize(800, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
 
@@ -63,12 +65,14 @@ public class LibraryManagementSystem extends JFrame {
         topPanel.add(menuPanel, BorderLayout.CENTER);
 
         this.cardLayout = new CardLayout();
-        JPanel contentPanel = new JPanel(cardLayout);
+        this.contentPanel = new JPanel(cardLayout);
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         this.loginPanel = new LoginPanel();
+        this.readerManagementPanel = new ReaderManagementPanel();
         contentPanel.add(loginPanel, "Login");
+        contentPanel.add(readerManagementPanel, "Readers");
 
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(contentPanel, BorderLayout.CENTER);
@@ -79,6 +83,14 @@ public class LibraryManagementSystem extends JFrame {
         librarianManagement = new LibrarianManagement();
         librarianManagement.loadLibrarianListFromFile();
         btn1.addActionListener(l -> this.cardLayout.show(contentPanel, "Login"));
+        btn2.addActionListener(l -> {
+            if (this.readerManagement == null) {
+                this.readerManagement = new ReaderManagement();
+                this.readerManagement.loadReadersFromFile();
+            }
+            this.readerManagementPanel.loadReadersToTable(this.readerManagement.getReaders());
+            this.cardLayout.show(contentPanel, "Readers");
+        });
 
         loginPanel.loginButton.addActionListener(l -> {
             String name = loginPanel.getUsername();
@@ -96,12 +108,11 @@ public class LibraryManagementSystem extends JFrame {
             if (password.length() < 6)
                 loginPanel.showError("Password phải >= 6 ký tự!");
 
-            
             if (librarianManagement.checkValidAccount(name, password)) {
                 this.remove(btn1);
-                JOptionPane.showMessageDialog(this, "Đăng nhập thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else {
+                JOptionPane.showMessageDialog(this, "Đăng nhập thành công!", "Thành công",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
                 loginPanel.showError("Username hoặc password không đúng!");
             }
 

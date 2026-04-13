@@ -1,18 +1,18 @@
 import java.time.LocalDate;
 
 public class Reader {
-    private String readerId;
+    private String readerID;
     private String name;
     private String idCard;
     private LocalDate dateOfBirth;
     private String gender;
     private String email;
     private String address;
-    private LocalDate issueDate;
+    private LocalDate cardCreationDate;
     private LocalDate expiryDate;
     
     public String getReaderId() {
-        return readerId;
+        return readerID;
     }
     public String getName() {
         return name;
@@ -32,14 +32,14 @@ public class Reader {
     public String getAddress() {
         return address;
     }
-    public LocalDate getIssueDate() {
-        return issueDate;
+    public LocalDate getCardCreationDate() {
+        return cardCreationDate;
     }
     public LocalDate getExpiryDate() {
         return expiryDate;
     }
-    public void setReaderId(String readerId) {
-        this.readerId = readerId;
+    public void setReaderId(String readerID) {
+        this.readerID = readerID;
     }
     public void setName(String name) {
         this.name = name;
@@ -59,23 +59,23 @@ public class Reader {
     public void setAddress(String address) {
         this.address = address;
     }
-    public void setIssueDate(LocalDate issueDate) {
-        this.issueDate = issueDate;
+    public void setCardCreationDate(LocalDate cardCreationDate) {
+        this.cardCreationDate = cardCreationDate;
     }
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
     }
-    public Reader(String readerId, String name, String idCard, LocalDate dateOfBirth, String gender, String email,
+    public Reader(String readerID, String name, String idCard, LocalDate dateOfBirth, String gender, String email,
             String address, LocalDate issueDate) {
-        this.readerId = readerId;
+        this.readerID = readerID;
         this.name = name;
         this.idCard = idCard;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.email = email;
         this.address = address;
-        this.issueDate = issueDate;
-        this.expiryDate = this.issueDate.plusMonths(48);
+        this.cardCreationDate = issueDate;
+        this.expiryDate = this.cardCreationDate.plusMonths(48);
     }
 
 
