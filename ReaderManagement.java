@@ -10,10 +10,9 @@ public class ReaderManagement {
     private static final String readersFile = "readersFile.txt";
     private ArrayList<Reader> readers;
 
-    ReaderManagement(){
-        this.readers = new ArrayList<>();    
+    ReaderManagement() {
+        this.readers = new ArrayList<>();
     }
-
 
     public void saveReaderListToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(readersFile))) {
@@ -22,6 +21,7 @@ public class ReaderManagement {
                         + reader.getIdCard() + "," + reader.getDateOfBirth().toString() + "," + reader.getGender() + ","
                         + reader.getEmail() + "," + reader.getAddress() + ","
                         + reader.getCardCreationDate().toString() + "," + reader.getExpiryDate().toString());
+                writer.newLine();
             }
             writer.close();
 
@@ -31,12 +31,12 @@ public class ReaderManagement {
     }
 
     public void loadReadersFromFile() {
+        this.readers.clear();
         try (BufferedReader reader = new BufferedReader(new FileReader(readersFile))) {
             String line;
-            while (reader.readLine() != null) {
-                line = reader.readLine();
+            while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length == 9) {
+                if (data.length >= 8) {
                     String readerId = data[0];
                     String name = data[1];
                     String idCard = data[2];
@@ -45,11 +45,14 @@ public class ReaderManagement {
                     String email = data[5];
                     String address = data[6];
                     LocalDate cardCreationDate = LocalDate.parse(data[7]);
-                    LocalDate expiryDate = LocalDate.parse(data[8]);
 
                     Reader readerObj = new Reader(readerId, name, idCard, dateOfBirth, gender, email, address,
                             cardCreationDate);
-                    readerObj.setExpiryDate(expiryDate);
+                    if (data.length == 9) {
+                        LocalDate expiryDate = LocalDate.parse(data[8]);
+                        readerObj.setExpiryDate(expiryDate);
+                    }
+
                     this.readers.add(readerObj);
                 }
             }
@@ -60,17 +63,15 @@ public class ReaderManagement {
         }
     }
 
-    public void addReader(Reader reader){
+    public void addReader(Reader reader) {
         if (this.readers == null)
             this.readers = new ArrayList<>();
         this.readers.add(reader);
     }
 
-    public void changeReaderInfo(Reader reader, String ISNB){
-        for (int i = 0; i < this.readers.size(); i++)
-        {
-            if (this.readers.get(i).getReaderId().equals(ISNB))
-            {
+    public void changeReaderInfo(Reader reader, String ISNB) {
+        for (int i = 0; i < this.readers.size(); i++) {
+            if (this.readers.get(i).getReaderId().equals(ISNB)) {
                 this.readers.get(i).setReaderId(reader.getReaderId());
                 this.readers.get(i).setAddress(reader.getAddress());
                 this.readers.get(i).setEmail(reader.getEmail());
@@ -84,7 +85,7 @@ public class ReaderManagement {
         }
     }
 
-    public ArrayList<Reader> getReaders(){
+    public ArrayList<Reader> getReaders() {
         return this.readers;
     }
 

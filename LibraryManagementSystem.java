@@ -18,7 +18,6 @@ public class LibraryManagementSystem extends JFrame {
     private LoginPanel loginPanel;
     private ReaderManagementPanel readerManagementPanel;
     private LibrarianManagement librarianManagement;
-    private ReaderManagement readerManagement;
 
     public LibraryManagementSystem() {
         this.setTitle("Library Management System");
@@ -84,11 +83,7 @@ public class LibraryManagementSystem extends JFrame {
         librarianManagement.loadLibrarianListFromFile();
         btn1.addActionListener(l -> this.cardLayout.show(contentPanel, "Login"));
         btn2.addActionListener(l -> {
-            if (this.readerManagement == null) {
-                this.readerManagement = new ReaderManagement();
-                this.readerManagement.loadReadersFromFile();
-            }
-            this.readerManagementPanel.loadReadersToTable(this.readerManagement.getReaders());
+            this.readerManagementPanel.loadTableData();;
             this.cardLayout.show(contentPanel, "Readers");
         });
 

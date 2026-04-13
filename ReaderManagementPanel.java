@@ -1,8 +1,16 @@
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 public class ReaderManagementPanel extends JPanel {
@@ -22,37 +30,40 @@ public class ReaderManagementPanel extends JPanel {
     private JButton prevButton;
     private JButton nextButton;
 
-    public ReaderManagementPanel(){
+    public ReaderManagementPanel() {
         this.setLayout(new BorderLayout());
         this.setBackground(Color.WHITE);
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        this.readerManagement = new ReaderManagement();
+
+        readerManagement = new ReaderManagement();
 
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         searchPanel.setBackground(Color.WHITE);
         searchPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        
+
         JLabel label = new JLabel("Search By:");
         label.setFont(new Font("Arial", Font.BOLD, 12));
-        searchTypeCombo = new JComboBox<>(new String[]{"Họ tên", "Mã độc giả"});
+        searchTypeCombo = new JComboBox<>(new String[] { "Họ tên", "Mã độc giả" });
         searchField = new JTextField(20);
         searchField.setFont(new Font("Arial", Font.PLAIN, 12));
         searchField.setPreferredSize(new Dimension(50, 25));
         searchButton = createButton("Search", new Color(0, 188, 212));
-
 
         searchPanel.add(label);
         searchPanel.add(searchTypeCombo);
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
 
-        String[] columns = { "ID", "Mã độc giả", "Họ tên", "Ngày sinh", "Giới tính", "Email", "Địa chỉ", "Ngày lập thẻ", "Ngày hết hạn"};
+        String[] columns = { "ID", "Mã độc giả", "Họ tên", "Ngày sinh", "Giới tính", "Email", "Địa chỉ", "Ngày lập thẻ",
+                "Ngày hết hạn" };
         this.tableModel = new DefaultTableModel(columns, 0);
         this.table = new JTable(tableModel);
         table.setFont(new Font("Arial", Font.PLAIN, 12));
         table.setRowHeight(25);
         table.setSelectionBackground(new Color(0, 172, 193));
+        
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
 
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBackground(Color.WHITE);
@@ -64,7 +75,7 @@ public class ReaderManagementPanel extends JPanel {
         // buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         buttonPanel.setBorder(BorderFactory.createLineBorder(new Color(50, 50, 50), 1));
-        
+
         this.addButton = createButton("Add", new Color(0, 172, 193));
         this.editButton = createButton("Edit", new Color(0, 172, 193));
         this.deleteButton = createButton("Delete", new Color(0, 172, 193));
@@ -90,41 +101,40 @@ public class ReaderManagementPanel extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    public void previousPage(){
-        if (currentPage > 0)
-        {
+    public void previousPage() {
+        if (currentPage > 0) {
             currentPage--;
             loadTableData();
         }
-            
+
     }
 
-    public void nextPage(){
-        int totalPages = (this.readerManagement.getReaders().size() + rowsPerPage - 1)/ rowsPerPage; 
-        if (currentPage > 0){
+    public void nextPage() {
+        int totalPages = (this.readerManagement.getReaders().size() + rowsPerPage - 1) / rowsPerPage;
+        if (currentPage < totalPages) {
             currentPage++;
             loadTableData();
         }
     }
 
-    public void loadTableData(){
+    public void loadTableData() {
+        this.readerManagement.loadReadersFromFile();
         tableModel.setRowCount(0);
         int startIndex = currentPage * rowsPerPage;
         int endIndex = Math.min(startIndex + rowsPerPage, this.readerManagement.getReaders().size());
-        
-        this.readerManagement.loadReadersFromFile();
+
         for (int i = startIndex; i < endIndex; i++) {
             Reader reader = this.readerManagement.getReaders().get(i);
             Object[] rowData = {
-                i + 1,
-                reader.getReaderId(),
-                reader.getName(),
-                reader.getDateOfBirth().toString(),
-                reader.getGender(),
-                reader.getEmail(),
-                reader.getAddress(),
-                reader.getCardCreationDate().toString(),
-                reader.getExpiryDate().toString()
+                    i + 1,
+                    reader.getReaderId(),
+                    reader.getName(),
+                    reader.getDateOfBirth().toString(),
+                    reader.getGender(),
+                    reader.getEmail(),
+                    reader.getAddress(),
+                    reader.getCardCreationDate().toString(),
+                    reader.getExpiryDate().toString()
             };
             tableModel.addRow(rowData);
         }
@@ -138,29 +148,17 @@ public class ReaderManagementPanel extends JPanel {
         nextButton.setEnabled(currentPage < totalPages - 1);
     }
 
-    public DefaultTableModel getTableModel(){
+    public DefaultTableModel getTableModel() {
         return tableModel;
     }
 
-    public void addRowToTable(Reader reader){
+    public void addRowToTable(Reader reader) {
         this.readerManagement.getReaders().add(reader);
         currentPage = 0;
         loadTableData();
     }
 
-    public void loadReadersToTable(java.util.ArrayList<Reader> readers){
-        this.readerManagement.getReaders().clear();
-        if (readers != null) {
-            for (Reader reader : readers) {
-                this.readerManagement.getReaders().add(reader);
-            }
-        }
-        currentPage = 0;
-        loadTableData();
-    }
-
-    private JButton createButton(String text, Color bgColor)
-    {
+    private JButton createButton(String text, Color bgColor) {
         JButton btn = new JButton(text);
         btn.setFont(new Font("Arial", Font.BOLD, 12));
         btn.setPreferredSize(new Dimension(75, 30));
