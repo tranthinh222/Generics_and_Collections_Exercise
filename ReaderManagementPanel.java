@@ -4,13 +4,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class ReaderManagementPanel extends JPanel {
@@ -57,12 +51,17 @@ public class ReaderManagementPanel extends JPanel {
 
         String[] columns = { "ID", "Mã độc giả", "Họ tên", "Ngày sinh", "Giới tính", "Email", "Địa chỉ", "Ngày lập thẻ",
                 "Ngày hết hạn" };
-        this.tableModel = new DefaultTableModel(columns, 0);
+        this.tableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         this.table = new JTable(tableModel);
         table.setFont(new Font("Arial", Font.PLAIN, 12));
         table.setRowHeight(25);
         table.setSelectionBackground(new Color(0, 172, 193));
-        
+
         table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
 
         JPanel tablePanel = new JPanel(new BorderLayout());
@@ -72,13 +71,33 @@ public class ReaderManagementPanel extends JPanel {
         tablePanel.setBorder(BorderFactory.createLineBorder(new Color(50, 50, 50), 1));
 
         JPanel buttonPanel = new JPanel();
-        // buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         buttonPanel.setBorder(BorderFactory.createLineBorder(new Color(50, 50, 50), 1));
 
         this.addButton = createButton("Add", new Color(0, 172, 193));
         this.editButton = createButton("Edit", new Color(0, 172, 193));
         this.deleteButton = createButton("Delete", new Color(0, 172, 193));
+
+        this.addButton.addActionListener(e -> {
+            AddReaderDialog dialog = new AddReaderDialog((JFrame) SwingUtilities.getWindowAncestor(this));
+            dialog.setVisible(true);
+
+            if (dialog.isSubmitted()) {
+                Reader newReader = dialog.getReader();
+                if (newReader != null) {
+                    this.readerManagement.addReader(newReader);
+                    this.readerManagement.saveReaderListToFile();
+                    loadTableData();
+                    JOptionPane.showMessageDialog(this, "Reader added successfully!", "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Invalid data entered!", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
