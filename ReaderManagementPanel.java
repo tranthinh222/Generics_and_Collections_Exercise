@@ -97,6 +97,36 @@ public class ReaderManagementPanel extends JPanel {
             }
         });
 
+        this.deleteButton.addActionListener(e -> {
+            int selectedRow = this.table.getSelectedRow();
+            if (selectedRow == -1) {
+               JOptionPane.showMessageDialog(this, "Please select a reader to delete!", "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int index = (currentPage * rowsPerPage) + selectedRow;
+            if (index >= this.readerManagement.getReaders().size()) {
+                JOptionPane.showMessageDialog(this, "Invalid selection!", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Reader selectedReader = this.readerManagement.getReaders().get(index);
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Are you sure you want to delete reader: " + selectedReader.getName() + "?",
+                    "Confirm Delete",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                this.readerManagement.getReaders().remove(index);
+                this.readerManagement.saveReaderListToFile();
+                loadTableData();
+                JOptionPane.showMessageDialog(this, "Reader deleted successfully!", "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
 
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
