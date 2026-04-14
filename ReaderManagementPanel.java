@@ -3,8 +3,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 public class ReaderManagementPanel extends JPanel {
@@ -38,10 +48,11 @@ public class ReaderManagementPanel extends JPanel {
 
         JLabel label = new JLabel("Search By:");
         label.setFont(new Font("Arial", Font.BOLD, 12));
-        searchTypeCombo = new JComboBox<>(new String[] { "Họ tên", "Mã độc giả" });
+        searchTypeCombo = new JComboBox<>(new String[] { "Họ tên", "CMND/CCCD" });
         searchField = new JTextField(20);
         searchField.setFont(new Font("Arial", Font.PLAIN, 12));
         searchField.setPreferredSize(new Dimension(50, 25));
+        searchField.enableInputMethods(false);
         searchButton = createButton("Search", new Color(0, 188, 212));
 
         searchPanel.add(label);
@@ -49,7 +60,10 @@ public class ReaderManagementPanel extends JPanel {
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
 
-        String[] columns = { "ID", "Mã độc giả", "Họ tên", "Ngày sinh", "Giới tính", "Email", "Địa chỉ", "Ngày lập thẻ",
+        searchButton.addActionListener(e -> performSearch());
+
+        String[] columns = { "ID", "Mã độc giả", "Họ tên", "Ngày sinh", "Giới tính", "Email", "Địa chỉ",
+                "Ngày lập thẻ",
                 "Ngày hết hạn" };
         this.tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -100,7 +114,7 @@ public class ReaderManagementPanel extends JPanel {
         this.deleteButton.addActionListener(e -> {
             int selectedRow = this.table.getSelectedRow();
             if (selectedRow == -1) {
-               JOptionPane.showMessageDialog(this, "Please select a reader to delete!", "Warning",
+                JOptionPane.showMessageDialog(this, "Please select a reader to delete!", "Warning",
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
@@ -126,7 +140,6 @@ public class ReaderManagementPanel extends JPanel {
                         JOptionPane.INFORMATION_MESSAGE);
             }
         });
-
 
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
@@ -216,5 +229,86 @@ public class ReaderManagementPanel extends JPanel {
         btn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         btn.setFocusPainted(false);
         return btn;
+    }
+
+    private void performSearch() {
+        String searchType = (String) searchTypeCombo.getSelectedItem();
+        String searchValue = searchField.getText().trim();
+
+        if (searchValue.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter search value!", "Warning",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        this.readerManagement.loadReadersFromFile();
+        ArrayList<Reader> allReaders = this.readerManagement.getReaders();
+        ArrayList<Reader> searchResults = new java.util.ArrayList<>();
+        for (Reader reader : allReaders) {
+            boolean match = false;
+
+            if ("Họ tên".equals(searchType)) {
+                match = reader.getName().toLowerCase().contains(searchValue.toLowerCase());
+            } else if ("CMND/CCCD".equals(searchType)) {
+                match = reader.getIdCard().contains(searchValue);
+            }
+
+            if (match) {
+                searchResults.add(reader);
+            }
+        }
+        if (searchResults.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No readers found matching: " + searchValue, "Search Result",
+                    JOptionPane.INFORMATION_MESSAGE);
+            loadTableData();
+        } else {
+            currentPage = 0;
+            displaySearchResults(searchResults);
+        }
+    }
+
+    private void displaySearchResults(ArrayList<Reader> results) {
+        tableModel.setRowCount(0);
+        int startIndex = currentPage * rowsPerPage;
+        int endIndex = Math.min(startIndex + rowsPerPage, results.size());
+
+        for (int i = startIndex; i < endIndex; i++) {
+            Reader reader = results.get(i);
+            Object[] rowData = {
+                    i + 1,
+                    reader.getReaderId(),
+                    reader.getName(),
+                    reader.getDateOfBirth().toString(),
+                    reader.getGender(),
+                    reader.getEmail(),
+                    reader.getAddress(),
+                    reader.getCardCreationDate().toString(),
+                    reader.getExpiryDate().toString()
+            };
+            tableModel.addRow(rowData);
+        }
+
+        int totalPages = (results.size() + rowsPerPage - 1) / rowsPerPage;
+        if (totalPages == 0)
+            totalPages = 1;
+        pageLabel.setText("Page " + (currentPage + 1) + " / " + totalPages + " (Search Results)");
+
+        prevButton.setEnabled(currentPage > 0);
+        nextButton.setEnabled(currentPage < totalPages - 1);
+
+        prevButton.addActionListener(l -> {
+            if (currentPage > 0) {
+                currentPage--;
+                displaySearchResults(results);
+            }
+        });
+
+        nextButton.addActionListener(l -> {
+            int totalPagesForResults = (results.size() + rowsPerPage - 1) / rowsPerPage;
+            if (currentPage < totalPagesForResults - 1) {
+                currentPage++;
+                displaySearchResults(results);
+            }
+        });
     }
 }
