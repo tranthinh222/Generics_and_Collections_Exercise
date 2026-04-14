@@ -136,6 +136,38 @@ public class ReaderManagementPanel extends JPanel {
             }
         });
 
+        this.editButton.addActionListener(e -> {
+            int selectedRow = this.table.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Please select a reader to edit!", "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int index = (currentPage * rowsPerPage) + selectedRow;
+            if (index >= this.readerManagement.getReaders().size()) {
+                JOptionPane.showMessageDialog(this, "Invalid selection!", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Reader selectedReader = this.readerManagement.getReaders().get(index);
+            EditReaderDialog editDialog = new EditReaderDialog((JFrame) SwingUtilities.getWindowAncestor(this),
+                    selectedReader);
+            editDialog.setVisible(true);
+
+            if (editDialog.isSubmitted()) {
+                Reader updatedReader = editDialog.getReader();
+                if (updatedReader != null) {
+                    this.readerManagement.getReaders().set(index, updatedReader);
+                    this.readerManagement.saveReaderListToFile();
+                    loadTableData();
+                    JOptionPane.showMessageDialog(this, "Reader updated successfully!", "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
