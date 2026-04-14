@@ -17,6 +17,7 @@ public class LibraryManagementSystem extends JFrame {
     private CardLayout cardLayout;
     private LoginPanel loginPanel;
     private ReaderManagementPanel readerManagementPanel;
+    private BookManagementPanel bookManagementPanel;
     private LibrarianManagement librarianManagement;
 
     public LibraryManagementSystem() {
@@ -70,8 +71,10 @@ public class LibraryManagementSystem extends JFrame {
 
         this.loginPanel = new LoginPanel();
         this.readerManagementPanel = new ReaderManagementPanel();
+        this.bookManagementPanel = new BookManagementPanel();
         contentPanel.add(loginPanel, "Login");
         contentPanel.add(readerManagementPanel, "Readers");
+        contentPanel.add(bookManagementPanel, "Books");
 
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(contentPanel, BorderLayout.CENTER);
@@ -83,8 +86,13 @@ public class LibraryManagementSystem extends JFrame {
         librarianManagement.loadLibrarianListFromFile();
         btn1.addActionListener(l -> this.cardLayout.show(contentPanel, "Login"));
         btn2.addActionListener(l -> {
-            this.readerManagementPanel.loadTableData();;
+            this.readerManagementPanel.loadTableData();
+            ;
             this.cardLayout.show(contentPanel, "Readers");
+        });
+        btn3.addActionListener(l -> {
+            this.bookManagementPanel.loadTableData();
+            this.cardLayout.show(contentPanel, "Books");
         });
 
         loginPanel.loginButton.addActionListener(l -> {

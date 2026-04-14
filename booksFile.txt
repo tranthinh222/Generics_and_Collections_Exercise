@@ -1,0 +1,30 @@
+ISBN001,Java Programming Basics,James Gosling,Oracle Press,2015,Programming,29.99,10
+ISBN002,Effective Java,Joshua Bloch,Addison-Wesley,2018,Programming,45.50,8
+ISBN003,Clean Code,Robert C. Martin,Prentice Hall,2008,Programming,40.00,12
+ISBN004,Design Patterns,Erich Gamma,Addison-Wesley,1994,Software Engineering,50.00,5
+ISBN005,Data Structures in Java,Mark Allen Weiss,Pearson,2011,Programming,35.75,9
+ISBN006,Operating System Concepts,Abraham Silberschatz,Wiley,2014,Computer Science,55.20,6
+ISBN007,Computer Networks,Andrew S. Tanenbaum,Pearson,2013,Networking,48.00,7
+ISBN008,Artificial Intelligence,A Stuart Russell,Pearson,2020,AI,60.00,4
+ISBN009,Machine Learning Basics,Tom Mitchell,McGraw-Hill,1997,AI,42.30,11
+ISBN010,Deep Learning,Ian Goodfellow,MIT Press,2016,AI,65.00,3
+ISBN011,Python Crash Course,Eric Matthes,No Starch Press,2019,Programming,30.00,15
+ISBN012,Head First Java,Kathy Sierra,O'Reilly,2005,Programming,38.99,10
+ISBN013,Algorithms,Robert Sedgewick,Addison-Wesley,2011,Programming,49.99,6
+ISBN014,Introduction to Algorithms,Thomas H. Cormen,MIT Press,2009,Programming,70.00,5
+ISBN015,Refactoring,Martin Fowler,Addison-Wesley,2018,Software Engineering,47.00,7
+ISBN016,The Pragmatic Programmer,Andrew Hunt,Addison-Wesley,1999,Programming,42.00,9
+ISBN017,Code Complete,Steve McConnell,Microsoft Press,2004,Programming,58.00,4
+ISBN018,Database System Concepts,Silberschatz,McGraw-Hill,2010,Database,53.00,6
+ISBN019,SQL Cookbook,Anthony Molinaro,O'Reilly,2020,Database,44.00,8
+ISBN020,NoSQL Distilled,Pramod Sadalage,Addison-Wesley,2013,Database,39.00,10
+ISBN021,Spring in Action,Craig Walls,Manning,2018,Programming,46.00,7
+ISBN022,Java Concurrency in Practice,Brian Goetz,Addison-Wesley,2006,Programming,52.00,5
+ISBN023,Kotlin in Action,Dmitry Jemerov,Manning,2017,Programming,41.00,6
+ISBN024,Android Programming Guide,Bill Phillips,O'Reilly,2019,Mobile,37.00,9
+ISBN025,Flutter for Beginners,Alessandro Biessek,Packt,2021,Mobile,34.00,11
+ISBN026,React Basics,Alex Banks,O'Reilly,2020,Web,36.00,8
+ISBN027,Node.js Design Patterns,Mario Casciaro,Packt,2020,Web,45.00,7
+ISBN028,Learning JavaScript,Ethan Brown,O'Reilly,2016,Web,33.00,10
+ISBN029,HTML and CSS Design,Jon Duckett,Wiley,2011,Web,28.00,14
+ISBN030,Cybersecurity Essentials,Charles J. Brooks,Sybex,2018,Security,55.00,5
