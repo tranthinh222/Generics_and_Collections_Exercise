@@ -62,15 +62,10 @@ public class ReaderManagementPanel extends JPanel {
 
         searchButton.addActionListener(e -> performSearch());
 
-        String[] columns = { "ID", "Mã độc giả", "Họ tên", "Ngày sinh", "Giới tính", "Email", "Địa chỉ",
+        String[] columns = { "ID", "Mã độc giả", "Họ tên", "CMND", "Ngày sinh", "Giới tính", "Email", "Địa chỉ",
                 "Ngày lập thẻ",
                 "Ngày hết hạn" };
-        this.tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+        this.tableModel = new DefaultTableModel(columns, 0);
         this.table = new JTable(tableModel);
         table.setFont(new Font("Arial", Font.PLAIN, 12));
         table.setRowHeight(25);
@@ -191,6 +186,7 @@ public class ReaderManagementPanel extends JPanel {
                     i + 1,
                     reader.getReaderId(),
                     reader.getName(),
+                    reader.getIdCard(),
                     reader.getDateOfBirth().toString(),
                     reader.getGender(),
                     reader.getEmail(),
@@ -278,6 +274,7 @@ public class ReaderManagementPanel extends JPanel {
                     i + 1,
                     reader.getReaderId(),
                     reader.getName(),
+                    reader.getIdCard(),
                     reader.getDateOfBirth().toString(),
                     reader.getGender(),
                     reader.getEmail(),

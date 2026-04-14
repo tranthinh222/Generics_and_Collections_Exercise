@@ -21,7 +21,7 @@ public class LibraryManagementSystem extends JFrame {
 
     public LibraryManagementSystem() {
         this.setTitle("Library Management System");
-        this.setSize(800, 600);
+        this.setSize(900, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
 
