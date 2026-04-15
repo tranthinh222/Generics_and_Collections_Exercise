@@ -137,6 +137,36 @@ public class BookManagementPanel extends JPanel {
             }
         });
 
+        editButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Please select a book to edit!", "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int actualIndex = currentPage * rowsPerPage + selectedRow;
+            Book selectedBook = this.bookManagement.getBooks().get(actualIndex);
+
+            EditBookDialog dialog = new EditBookDialog((JFrame) SwingUtilities.getWindowAncestor(this),
+                    selectedBook);
+            dialog.setVisible(true);
+
+            if (dialog.isSubmitted()) {
+                Book updatedBook = dialog.getBook();
+                if (updatedBook != null) {
+                    this.bookManagement.getBooks().set(actualIndex, updatedBook);
+                    this.bookManagement.saveBooksToFile();
+                    loadTableData();
+                    JOptionPane.showMessageDialog(this, "Book updated successfully!", "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error updating book. Please check your input.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
