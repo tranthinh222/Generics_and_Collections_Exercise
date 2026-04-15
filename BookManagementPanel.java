@@ -103,6 +103,40 @@ public class BookManagementPanel extends JPanel {
             }
         });
 
+        deleteButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Please select a book to delete!", "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int actualIndex = currentPage * rowsPerPage + selectedRow;
+            Book selectedBook = this.bookManagement.getBooks().get(actualIndex);
+
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Are you sure you want to delete:\n" + selectedBook.getTitle() + "?",
+                    "Confirm Delete", JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                this.bookManagement.getBooks().remove(actualIndex);
+                this.bookManagement.saveBooksToFile();
+
+                // Adjust currentPage if needed
+                int totalBooks = this.bookManagement.getBooks().size();
+                int totalPages = (totalBooks + rowsPerPage - 1) / rowsPerPage;
+                if (totalPages == 0)
+                    totalPages = 1;
+                if (currentPage >= totalPages) {
+                    currentPage = totalPages - 1;
+                }
+
+                loadTableData();
+                JOptionPane.showMessageDialog(this, "Book deleted successfully!", "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);

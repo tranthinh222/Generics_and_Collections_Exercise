@@ -28,4 +28,3 @@ ISBN027|Node.js Design Patterns|Mario Casciaro|Packt|2020|Web|45.0|7
 ISBN028|Learning JavaScript|Ethan Brown|O'Reilly|2016|Web|33.0|10
 ISBN029|HTML and CSS Design|Jon Duckett|Wiley|2011|Web|28.0|14
 ISBN030|Cybersecurity Essentials|Charles J. Brooks|Sybex|2018|Security|55.0|5
-ISBN031|Computer Networking: A Top-Down Approach|James Kurose, Keith Ross|Pearson|2021|Computer Science / Networking|150.0|50
