@@ -20,7 +20,6 @@ public class BorrowManagementPanel extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     private BorrowRecordManagement borrowRecordManagement;
-    private BookManagement bookManagement;
     private int currentPage = 0;
     private int rowsPerPage = 10;
     private JLabel pageLabel;
@@ -33,34 +32,6 @@ public class BorrowManagementPanel extends JPanel {
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         borrowRecordManagement = new BorrowRecordManagement();
-        bookManagement = new BookManagement();
-
-        // Button panel
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        buttonPanel.setBorder(BorderFactory.createLineBorder(new Color(50, 50, 50), 1));
-        buttonPanel.setBackground(Color.WHITE);
-
-        JButton createButton = createButton("Lập Phiếu", new Color(0, 172, 193));
-        JButton viewDetailsButton = createButton("Chi Tiết", new Color(0, 172, 193));
-        JButton returnButton = createButton("Trả Sách", new Color(0, 172, 193));
-
-        buttonPanel.add(createButton);
-        buttonPanel.add(viewDetailsButton);
-        buttonPanel.add(returnButton);
-        buttonPanel.add(new JLabel(" | "));
-
-        prevButton = createButton("< Previous", new Color(0, 172, 193));
-        prevButton.setPreferredSize(new Dimension(90, 30));
-        pageLabel = new JLabel("Page 1 / 1");
-        pageLabel.setFont(new Font("Arial", Font.BOLD, 12));
-        nextButton = createButton("Next >", new Color(0, 172, 193));
-        prevButton.addActionListener(l -> previousPage());
-        nextButton.addActionListener(l -> nextPage());
-
-        buttonPanel.add(prevButton);
-        buttonPanel.add(pageLabel);
-        buttonPanel.add(nextButton);
 
         // Table
         String[] columns = { "ID", "Mã Phiếu", "Mã Độc Giả", "Ngày Mượn", "Ngày Trả DK",
@@ -79,8 +50,57 @@ public class BorrowManagementPanel extends JPanel {
         tablePanel.add(table, BorderLayout.CENTER);
         tablePanel.setBorder(BorderFactory.createLineBorder(new Color(50, 50, 50), 1));
 
-        add(buttonPanel, BorderLayout.NORTH);
         add(tablePanel, BorderLayout.CENTER);
+
+        // Button panel (at bottom)
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BorderLayout());
+        buttonPanel.setBorder(BorderFactory.createLineBorder(new Color(50, 50, 50), 1));
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Left side: Create button
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        leftPanel.setBackground(Color.WHITE);
+        JButton createButton = createButton("Create Borrow", new Color(0, 172, 193));
+        leftPanel.add(createButton);
+
+        // Center side: Pagination
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        centerPanel.setBackground(Color.WHITE);
+
+        JButton prevButtonCustom = new JButton("< Previous");
+        prevButtonCustom.setFont(new Font("Arial", Font.BOLD, 12));
+        prevButtonCustom.setPreferredSize(new Dimension(90, 30));
+        prevButtonCustom.setBackground(new Color(0, 172, 193));
+        prevButtonCustom.setForeground(Color.WHITE);
+        prevButtonCustom.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        prevButtonCustom.setFocusPainted(false);
+        prevButton = prevButtonCustom;
+
+        pageLabel = new JLabel("Page 1 / 1");
+        pageLabel.setFont(new Font("Arial", Font.BOLD, 12));
+
+        JButton nextButtonCustom = new JButton("Next >");
+        nextButtonCustom.setFont(new Font("Arial", Font.BOLD, 12));
+        nextButtonCustom.setPreferredSize(new Dimension(90, 30));
+        nextButtonCustom.setBackground(new Color(0, 172, 193));
+        nextButtonCustom.setForeground(Color.WHITE);
+        nextButtonCustom.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        nextButtonCustom.setFocusPainted(false);
+        nextButton = nextButtonCustom;
+
+        prevButton.addActionListener(l -> previousPage());
+        nextButton.addActionListener(l -> nextPage());
+
+        centerPanel.add(prevButton);
+        centerPanel.add(pageLabel);
+        centerPanel.add(nextButton);
+
+        buttonPanel.add(leftPanel, BorderLayout.WEST);
+        buttonPanel.add(centerPanel, BorderLayout.CENTER);
+
+        add(buttonPanel, BorderLayout.SOUTH);
 
         // Event listeners
         createButton.addActionListener(e -> {
@@ -99,92 +119,6 @@ public class BorrowManagementPanel extends JPanel {
                         JOptionPane.INFORMATION_MESSAGE);
             }
         });
-
-        viewDetailsButton.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn phiếu mượn!", "Thông báo",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            int actualIndex = (currentPage * rowsPerPage) + selectedRow;
-            if (actualIndex >= borrowRecordManagement.getRecords().size()) {
-                JOptionPane.showMessageDialog(this, "Lựa chọn không hợp lệ!", "Lỗi",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            BorrowRecord record = borrowRecordManagement.getRecords().get(actualIndex);
-            showBorrowDetails(record);
-        });
-
-        returnButton.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn phiếu mượn!", "Thông báo",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            int actualIndex = (currentPage * rowsPerPage) + selectedRow;
-            if (actualIndex >= borrowRecordManagement.getRecords().size()) {
-                JOptionPane.showMessageDialog(this, "Lựa chọn không hợp lệ!", "Lỗi",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            BorrowRecord record = borrowRecordManagement.getRecords().get(actualIndex);
-            if (record.getStatus().equals("RETURNED")) {
-                JOptionPane.showMessageDialog(this, "Phiếu này đã được trả rồi!", "Thông báo",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            ReturnBorrowDialog returnDialog = new ReturnBorrowDialog(
-                    (JFrame) SwingUtilities.getWindowAncestor(this), record, bookManagement);
-            returnDialog.setVisible(true);
-
-            if (returnDialog.isSubmitted()) {
-                loadTableData();
-                JOptionPane.showMessageDialog(this, "Phiếu trả đã được xử lý!", "Thành công",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-    }
-
-    private void showBorrowDetails(BorrowRecord record) {
-        StringBuilder details = new StringBuilder();
-        details.append("Mã Phiếu: ").append(record.getRecordId()).append("\n");
-        details.append("Mã Độc Giả: ").append(record.getReaderId()).append("\n");
-        details.append("Ngày Mượn: ").append(record.getBorrowDate()).append("\n");
-        details.append("Ngày Trả DK: ").append(record.getExpectedReturnDate()).append("\n");
-
-        if (record.getActualReturnDate() != null) {
-            details.append("Ngày Trả TT: ").append(record.getActualReturnDate()).append("\n");
-        } else {
-            details.append("Ngày Trả TT: Chưa trả\n");
-        }
-
-        details.append("\nDanh Sách Sách:\n");
-        for (String isbn : record.getBorrowedISBNs()) {
-            Book book = bookManagement.getBookByISBN(isbn);
-            if (book != null) {
-                details.append("- ").append(book.getTitle()).append(" (").append(isbn).append(")\n");
-            } else {
-                details.append("- ISBN: ").append(isbn).append(" (Không tìm thấy)\n");
-            }
-        }
-
-        details.append("\nTrạng Thái: ").append(record.getStatus()).append("\n");
-
-        long penalty = record.calculateOverduePenalty();
-        if (penalty > 0) {
-            details.append("Phạt Quá Hạn: ").append(penalty).append(" VNĐ\n");
-        }
-
-        JOptionPane.showMessageDialog(this, details.toString(), "Chi Tiết Phiếu Mượn",
-                JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void previousPage() {
@@ -239,10 +173,9 @@ public class BorrowManagementPanel extends JPanel {
     private JButton createButton(String text, Color bgColor) {
         JButton btn = new JButton(text);
         btn.setFont(new Font("Arial", Font.BOLD, 12));
-        btn.setPreferredSize(new Dimension(75, 30));
         btn.setBackground(bgColor);
         btn.setForeground(Color.WHITE);
-        btn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        btn.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
         btn.setFocusPainted(false);
         return btn;
     }
