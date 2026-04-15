@@ -33,6 +33,8 @@ public class ReaderManagementPanel extends JPanel {
     private JLabel pageLabel;
     private JButton prevButton;
     private JButton nextButton;
+    private ArrayList<Reader> currentSearchResults = null; // null = showing all readers, not null = showing search
+                                                           // results
 
     public ReaderManagementPanel() {
         this.setLayout(new BorderLayout());
@@ -114,22 +116,39 @@ public class ReaderManagementPanel extends JPanel {
                 return;
             }
 
-            int index = (currentPage * rowsPerPage) + selectedRow;
-            if (index >= this.readerManagement.getReaders().size()) {
-                JOptionPane.showMessageDialog(this, "Invalid selection!", "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
+            int actualIndex = -1;
+            Reader selectedReader = null;
+
+            if (this.currentSearchResults != null) {
+                // Currently showing search results
+                selectedReader = this.currentSearchResults.get(selectedRow);
+                // Find actual index by ID card
+                for (int i = 0; i < this.readerManagement.getReaders().size(); i++) {
+                    if (this.readerManagement.getReaders().get(i).getIdCard().equals(selectedReader.getIdCard())) {
+                        actualIndex = i;
+                        break;
+                    }
+                }
+            } else {
+                // Showing all readers
+                actualIndex = (currentPage * rowsPerPage) + selectedRow;
+                if (actualIndex >= this.readerManagement.getReaders().size()) {
+                    JOptionPane.showMessageDialog(this, "Invalid selection!", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                selectedReader = this.readerManagement.getReaders().get(actualIndex);
             }
 
-            Reader selectedReader = this.readerManagement.getReaders().get(index);
             int confirm = JOptionPane.showConfirmDialog(this,
                     "Are you sure you want to delete reader: " + selectedReader.getName() + "?",
                     "Confirm Delete",
                     JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
-                this.readerManagement.getReaders().remove(index);
+                this.readerManagement.getReaders().remove(actualIndex);
                 this.readerManagement.saveReaderListToFile();
+                this.currentSearchResults = null; // Clear search results after delete
                 loadTableData();
                 JOptionPane.showMessageDialog(this, "Reader deleted successfully!", "Success",
                         JOptionPane.INFORMATION_MESSAGE);
@@ -144,14 +163,30 @@ public class ReaderManagementPanel extends JPanel {
                 return;
             }
 
-            int index = (currentPage * rowsPerPage) + selectedRow;
-            if (index >= this.readerManagement.getReaders().size()) {
-                JOptionPane.showMessageDialog(this, "Invalid selection!", "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
+            int actualIndex = -1;
+            Reader selectedReader = null;
+
+            if (this.currentSearchResults != null) {
+                // Currently showing search results
+                selectedReader = this.currentSearchResults.get(selectedRow);
+                // Find actual index by ID card
+                for (int i = 0; i < this.readerManagement.getReaders().size(); i++) {
+                    if (this.readerManagement.getReaders().get(i).getIdCard().equals(selectedReader.getIdCard())) {
+                        actualIndex = i;
+                        break;
+                    }
+                }
+            } else {
+                // Showing all readers
+                actualIndex = (currentPage * rowsPerPage) + selectedRow;
+                if (actualIndex >= this.readerManagement.getReaders().size()) {
+                    JOptionPane.showMessageDialog(this, "Invalid selection!", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                selectedReader = this.readerManagement.getReaders().get(actualIndex);
             }
 
-            Reader selectedReader = this.readerManagement.getReaders().get(index);
             EditReaderDialog editDialog = new EditReaderDialog((JFrame) SwingUtilities.getWindowAncestor(this),
                     selectedReader);
             editDialog.setVisible(true);
@@ -159,8 +194,9 @@ public class ReaderManagementPanel extends JPanel {
             if (editDialog.isSubmitted()) {
                 Reader updatedReader = editDialog.getReader();
                 if (updatedReader != null) {
-                    this.readerManagement.getReaders().set(index, updatedReader);
+                    this.readerManagement.getReaders().set(actualIndex, updatedReader);
                     this.readerManagement.saveReaderListToFile();
+                    this.currentSearchResults = null; // Clear search results after edit
                     loadTableData();
                     JOptionPane.showMessageDialog(this, "Reader updated successfully!", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
@@ -207,6 +243,7 @@ public class ReaderManagementPanel extends JPanel {
     }
 
     public void loadTableData() {
+        this.currentSearchResults = null; // Reset search results
         this.readerManagement.loadReadersFromFile();
         tableModel.setRowCount(0);
         int startIndex = currentPage * rowsPerPage;
@@ -296,6 +333,7 @@ public class ReaderManagementPanel extends JPanel {
     }
 
     private void displaySearchResults(ArrayList<Reader> results) {
+        this.currentSearchResults = results; // Store search results
         tableModel.setRowCount(0);
         int startIndex = currentPage * rowsPerPage;
         int endIndex = Math.min(startIndex + rowsPerPage, results.size());

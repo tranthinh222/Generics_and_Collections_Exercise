@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -26,6 +27,7 @@ public class BookManagementPanel extends JPanel {
     private JLabel pageLabel;
     private JButton prevButton;
     private JButton nextButton;
+    private ArrayList<Book> currentSearchResults = null; // null = showing all books, not empty = showing search results
 
     public BookManagementPanel() {
         this.setLayout(new BorderLayout());
@@ -47,6 +49,40 @@ public class BookManagementPanel extends JPanel {
         searchField.setPreferredSize(new Dimension(150, 25));
         searchField.enableInputMethods(false);
         JButton searchButton = createButton("Search", new Color(0, 188, 212));
+
+        searchButton.addActionListener(e -> {
+            String searchType = (String) searchTypeCombo.getSelectedItem();
+            String searchText = searchField.getText().trim();
+
+            if (searchText.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter search text!", "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            ArrayList<Book> searchResults = new ArrayList<>();
+            for (Book book : this.bookManagement.getBooks()) {
+                boolean matches = false;
+                if (searchType.equals("Tên sách")) {
+                    matches = book.getTitle().toLowerCase().contains(searchText.toLowerCase());
+                } else if (searchType.equals("ISBN")) {
+                    matches = book.getIsbn().toLowerCase().contains(searchText.toLowerCase());
+                }
+
+                if (matches) {
+                    searchResults.add(book);
+                }
+            }
+
+            if (searchResults.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No books found!", "Search Result",
+                        JOptionPane.INFORMATION_MESSAGE);
+                currentPage = 0;
+                loadTableData();
+            } else {
+                displaySearchResults(searchResults);
+            }
+        });
 
         searchPanel.add(label);
         searchPanel.add(searchTypeCombo);
@@ -111,8 +147,23 @@ public class BookManagementPanel extends JPanel {
                 return;
             }
 
-            int actualIndex = currentPage * rowsPerPage + selectedRow;
-            Book selectedBook = this.bookManagement.getBooks().get(actualIndex);
+            Book selectedBook = null;
+            int actualIndex = -1;
+
+            // If searching, get from search results; otherwise get from all books
+            if (this.currentSearchResults != null) {
+                selectedBook = this.currentSearchResults.get(selectedRow);
+                // Find the actual index in the full book list by ISBN
+                for (int i = 0; i < this.bookManagement.getBooks().size(); i++) {
+                    if (this.bookManagement.getBooks().get(i).getIsbn().equals(selectedBook.getIsbn())) {
+                        actualIndex = i;
+                        break;
+                    }
+                }
+            } else {
+                actualIndex = currentPage * rowsPerPage + selectedRow;
+                selectedBook = this.bookManagement.getBooks().get(actualIndex);
+            }
 
             int confirm = JOptionPane.showConfirmDialog(this,
                     "Are you sure you want to delete:\n" + selectedBook.getTitle() + "?",
@@ -121,6 +172,7 @@ public class BookManagementPanel extends JPanel {
             if (confirm == JOptionPane.YES_OPTION) {
                 this.bookManagement.getBooks().remove(actualIndex);
                 this.bookManagement.saveBooksToFile();
+                this.currentSearchResults = null; // Clear search results
 
                 // Adjust currentPage if needed
                 int totalBooks = this.bookManagement.getBooks().size();
@@ -145,8 +197,23 @@ public class BookManagementPanel extends JPanel {
                 return;
             }
 
-            int actualIndex = currentPage * rowsPerPage + selectedRow;
-            Book selectedBook = this.bookManagement.getBooks().get(actualIndex);
+            Book selectedBook = null;
+            int actualIndex = -1;
+
+            // If searching, get from search results; otherwise get from all books
+            if (this.currentSearchResults != null) {
+                selectedBook = this.currentSearchResults.get(selectedRow);
+                // Find the actual index in the full book list by ISBN
+                for (int i = 0; i < this.bookManagement.getBooks().size(); i++) {
+                    if (this.bookManagement.getBooks().get(i).getIsbn().equals(selectedBook.getIsbn())) {
+                        actualIndex = i;
+                        break;
+                    }
+                }
+            } else {
+                actualIndex = currentPage * rowsPerPage + selectedRow;
+                selectedBook = this.bookManagement.getBooks().get(actualIndex);
+            }
 
             EditBookDialog dialog = new EditBookDialog((JFrame) SwingUtilities.getWindowAncestor(this),
                     selectedBook);
@@ -157,7 +224,14 @@ public class BookManagementPanel extends JPanel {
                 if (updatedBook != null) {
                     this.bookManagement.getBooks().set(actualIndex, updatedBook);
                     this.bookManagement.saveBooksToFile();
-                    loadTableData();
+
+                    // If searching, refresh search; otherwise refresh all books
+                    if (this.currentSearchResults != null) {
+                        loadTableData(); // This will reset currentSearchResults to null
+                    } else {
+                        loadTableData();
+                    }
+
                     JOptionPane.showMessageDialog(this, "Book updated successfully!", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -205,6 +279,7 @@ public class BookManagementPanel extends JPanel {
     }
 
     public void loadTableData() {
+        this.currentSearchResults = null;
         this.bookManagement.loadBooksFromFile();
         tableModel.setRowCount(0);
         int startIndex = currentPage * rowsPerPage;
@@ -244,5 +319,35 @@ public class BookManagementPanel extends JPanel {
         btn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         btn.setFocusPainted(false);
         return btn;
+    }
+
+    private void displaySearchResults(ArrayList<Book> searchResults) {
+        this.currentSearchResults = searchResults; // Save search results
+        tableModel.setRowCount(0);
+        currentPage = 0;
+
+        for (int i = 0; i < searchResults.size(); i++) {
+            Book book = searchResults.get(i);
+            Object[] rowData = {
+                    i + 1,
+                    book.getIsbn(),
+                    book.getTitle(),
+                    book.getAuthor(),
+                    book.getPublisher(),
+                    book.getPublicationYear(),
+                    book.getCategory(),
+                    String.format("%.2f", book.getPrice()),
+                    book.getQuantity()
+            };
+            tableModel.addRow(rowData);
+        }
+
+        int totalPages = (searchResults.size() + rowsPerPage - 1) / rowsPerPage;
+        if (totalPages == 0)
+            totalPages = 1;
+        pageLabel.setText("Page 1 / " + totalPages);
+
+        prevButton.setEnabled(false);
+        nextButton.setEnabled(totalPages > 1);
     }
 }
