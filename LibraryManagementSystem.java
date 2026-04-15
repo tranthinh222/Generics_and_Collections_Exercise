@@ -18,6 +18,7 @@ public class LibraryManagementSystem extends JFrame {
     private LoginPanel loginPanel;
     private ReaderManagementPanel readerManagementPanel;
     private BookManagementPanel bookManagementPanel;
+    private BorrowManagementPanel borrowManagementPanel;
     private LibrarianManagement librarianManagement;
 
     public LibraryManagementSystem() {
@@ -72,9 +73,11 @@ public class LibraryManagementSystem extends JFrame {
         this.loginPanel = new LoginPanel();
         this.readerManagementPanel = new ReaderManagementPanel();
         this.bookManagementPanel = new BookManagementPanel();
+        this.borrowManagementPanel = new BorrowManagementPanel();
         contentPanel.add(loginPanel, "Login");
         contentPanel.add(readerManagementPanel, "Readers");
         contentPanel.add(bookManagementPanel, "Books");
+        contentPanel.add(borrowManagementPanel, "Borrow");
 
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(contentPanel, BorderLayout.CENTER);
@@ -93,6 +96,15 @@ public class LibraryManagementSystem extends JFrame {
         btn3.addActionListener(l -> {
             this.bookManagementPanel.loadTableData();
             this.cardLayout.show(contentPanel, "Books");
+        });
+        btn4.addActionListener(l -> {
+            this.borrowManagementPanel.loadTableData();
+            this.cardLayout.show(contentPanel, "Borrow");
+        });
+        btn5.addActionListener(l -> {
+            // Return functionality - for now showing borrow records
+            this.borrowManagementPanel.loadTableData();
+            this.cardLayout.show(contentPanel, "Borrow");
         });
 
         loginPanel.loginButton.addActionListener(l -> {

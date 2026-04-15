@@ -69,4 +69,13 @@ public class BookManagement {
     public ArrayList<Book> getBooks() {
         return books;
     }
+
+    public Book getBookByISBN(String isbn) {
+        for (Book book : books) {
+            if (book.getIsbn().equalsIgnoreCase(isbn)) {
+                return book;
+            }
+        }
+        return null;
+    }
 }
