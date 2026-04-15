@@ -82,7 +82,7 @@ public class Book {
 
     @Override
     public String toString() {
-        return isbn + "," + title + "," + author + "," + publisher + "," + publicationYear + "," +
-                category + "," + price + "," + quantity;
+        return isbn + "|" + title + "|" + author + "|" + publisher + "|" + publicationYear + "|" +
+                category + "|" + price + "|" + quantity;
     }
 }

@@ -20,7 +20,7 @@ public class BookManagement {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
+                String[] parts = line.split("\\|");
                 if (parts.length == 8) {
                     String isbn = parts[0];
                     String title = parts[1];
@@ -55,6 +55,15 @@ public class BookManagement {
 
     public void addBook(Book book) {
         books.add(book);
+    }
+
+    public boolean isbnExists(String isbn) {
+        for (Book book : books) {
+            if (book.getIsbn().equalsIgnoreCase(isbn)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ArrayList<Book> getBooks() {

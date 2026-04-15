@@ -7,10 +7,13 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 public class BookManagementPanel extends JPanel {
@@ -77,6 +80,28 @@ public class BookManagementPanel extends JPanel {
         JButton addButton = createButton("Add", new Color(0, 172, 193));
         JButton editButton = createButton("Edit", new Color(0, 172, 193));
         JButton deleteButton = createButton("Delete", new Color(0, 172, 193));
+
+        addButton.addActionListener(e -> {
+            AddBookDialog dialog = new AddBookDialog((JFrame) SwingUtilities.getWindowAncestor(this));
+            dialog.setVisible(true);
+
+            if (dialog.isSubmitted()) {
+                Book newBook = dialog.getBook();
+                if (newBook != null) {
+                    this.bookManagement.addBook(newBook);
+                    this.bookManagement.saveBooksToFile();
+                    this.bookManagement.loadBooksFromFile();
+                    int totalBooks = this.bookManagement.getBooks().size();
+                    currentPage = (totalBooks - 1) / rowsPerPage;
+                    loadTableData();
+                    JOptionPane.showMessageDialog(this, "Book added successfully!", "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error creating book. Please check your input.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
