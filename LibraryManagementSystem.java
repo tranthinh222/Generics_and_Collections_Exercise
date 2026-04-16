@@ -20,6 +20,7 @@ public class LibraryManagementSystem extends JFrame {
     private BookManagementPanel bookManagementPanel;
     private BorrowManagementPanel borrowManagementPanel;
     private ReturnManagementPanel returnManagementPanel;
+    private StatisticsPanel statisticsPanel;
     private LibrarianManagement librarianManagement;
     private JButton btn1, btn2, btn3, btn4, btn5, btn6;
 
@@ -77,11 +78,13 @@ public class LibraryManagementSystem extends JFrame {
         this.bookManagementPanel = new BookManagementPanel();
         this.borrowManagementPanel = new BorrowManagementPanel();
         this.returnManagementPanel = new ReturnManagementPanel();
+        this.statisticsPanel = new StatisticsPanel();
         contentPanel.add(loginPanel, "Login");
         contentPanel.add(readerManagementPanel, "Readers");
         contentPanel.add(bookManagementPanel, "Books");
         contentPanel.add(borrowManagementPanel, "Borrow");
         contentPanel.add(returnManagementPanel, "Return");
+        contentPanel.add(statisticsPanel, "Statistics");
 
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(contentPanel, BorderLayout.CENTER);
@@ -118,6 +121,11 @@ public class LibraryManagementSystem extends JFrame {
             setActiveButton(btn5);
             this.returnManagementPanel.loadTableData();
             this.cardLayout.show(contentPanel, "Return");
+        });
+        btn6.addActionListener(l -> {
+            setActiveButton(btn6);
+            this.statisticsPanel.loadStatistics();
+            this.cardLayout.show(contentPanel, "Statistics");
         });
 
         loginPanel.loginButton.addActionListener(l -> {
