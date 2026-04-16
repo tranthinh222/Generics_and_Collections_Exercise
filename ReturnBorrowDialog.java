@@ -36,11 +36,30 @@ public class ReturnBorrowDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         this.setResizable(false);
 
+        initializeDialog();
+    }
+
+    public ReturnBorrowDialog(JFrame parent, BorrowRecord record, BorrowRecordManagement borrowRecordManagement) {
+        super(parent, "Return Borrow", true);
+        this.record = record;
+        this.bookManagement = new BookManagement();
+        this.borrowRecordManagement = borrowRecordManagement;
+        this.missingBooks = new ArrayList<>();
+
+        this.setSize(600, 500);
+        this.setLocationRelativeTo(parent);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.setResizable(false);
+
+        initializeDialog();
+    }
+
+    private void initializeDialog() {
+
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Record info panel
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         infoPanel.setBackground(Color.WHITE);
         infoPanel.setBorder(BorderFactory.createTitledBorder("Thông Tin Phiếu Mượn"));
@@ -53,7 +72,6 @@ public class ReturnBorrowDialog extends JDialog {
 
         infoPanel.add(recordInfo);
 
-        // Books list
         JPanel booksPanel = new JPanel(new BorderLayout());
         booksPanel.setBackground(Color.WHITE);
         booksPanel.setBorder(BorderFactory.createTitledBorder("Danh Sách Sách"));

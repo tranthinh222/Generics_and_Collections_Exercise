@@ -49,6 +49,8 @@ public class BorrowRecordManagement {
                     }
 
                     String status = parts[6];
+                    // Normalize status to uppercase
+                    status = status.toUpperCase();
 
                     BorrowRecord record = new BorrowRecord(recordId, readerId, borrowDate,
                             expectedReturnDate, actualReturnDate, isbns, status);

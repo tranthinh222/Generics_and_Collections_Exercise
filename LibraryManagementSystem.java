@@ -19,7 +19,9 @@ public class LibraryManagementSystem extends JFrame {
     private ReaderManagementPanel readerManagementPanel;
     private BookManagementPanel bookManagementPanel;
     private BorrowManagementPanel borrowManagementPanel;
+    private ReturnManagementPanel returnManagementPanel;
     private LibrarianManagement librarianManagement;
+    private JButton btn1, btn2, btn3, btn4, btn5, btn6;
 
     public LibraryManagementSystem() {
         this.setTitle("Library Management System");
@@ -46,12 +48,12 @@ public class LibraryManagementSystem extends JFrame {
         menuPanel.setBackground(new Color(5, 148, 237));
 
         Font buttonFont = new Font("Arial", Font.PLAIN, 12);
-        JButton btn1 = createButton("Login", buttonFont);
-        JButton btn2 = createButton("Readers", buttonFont);
-        JButton btn3 = createButton("Books", buttonFont);
-        JButton btn4 = createButton("Borrow", buttonFont);
-        JButton btn5 = createButton("Return", buttonFont);
-        JButton btn6 = createButton("Statistics", buttonFont);
+        btn1 = createButton("Login", buttonFont);
+        btn2 = createButton("Readers", buttonFont);
+        btn3 = createButton("Books", buttonFont);
+        btn4 = createButton("Borrow", buttonFont);
+        btn5 = createButton("Return", buttonFont);
+        btn6 = createButton("Statistics", buttonFont);
 
         menuPanel.add(btn1);
         menuPanel.add(btn2);
@@ -74,10 +76,12 @@ public class LibraryManagementSystem extends JFrame {
         this.readerManagementPanel = new ReaderManagementPanel();
         this.bookManagementPanel = new BookManagementPanel();
         this.borrowManagementPanel = new BorrowManagementPanel();
+        this.returnManagementPanel = new ReturnManagementPanel();
         contentPanel.add(loginPanel, "Login");
         contentPanel.add(readerManagementPanel, "Readers");
         contentPanel.add(bookManagementPanel, "Books");
         contentPanel.add(borrowManagementPanel, "Borrow");
+        contentPanel.add(returnManagementPanel, "Return");
 
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(contentPanel, BorderLayout.CENTER);
@@ -87,24 +91,33 @@ public class LibraryManagementSystem extends JFrame {
 
         librarianManagement = new LibrarianManagement();
         librarianManagement.loadLibrarianListFromFile();
-        btn1.addActionListener(l -> this.cardLayout.show(contentPanel, "Login"));
+
+        // Set initial active button color
+        setActiveButton(btn1);
+
+        btn1.addActionListener(l -> {
+            setActiveButton(btn1);
+            this.cardLayout.show(contentPanel, "Login");
+        });
         btn2.addActionListener(l -> {
+            setActiveButton(btn2);
             this.readerManagementPanel.loadTableData();
-            ;
             this.cardLayout.show(contentPanel, "Readers");
         });
         btn3.addActionListener(l -> {
+            setActiveButton(btn3);
             this.bookManagementPanel.loadTableData();
             this.cardLayout.show(contentPanel, "Books");
         });
         btn4.addActionListener(l -> {
+            setActiveButton(btn4);
             this.borrowManagementPanel.loadTableData();
             this.cardLayout.show(contentPanel, "Borrow");
         });
         btn5.addActionListener(l -> {
-            // Return functionality - for now showing borrow records
-            this.borrowManagementPanel.loadTableData();
-            this.cardLayout.show(contentPanel, "Borrow");
+            setActiveButton(btn5);
+            this.returnManagementPanel.loadTableData();
+            this.cardLayout.show(contentPanel, "Return");
         });
 
         loginPanel.loginButton.addActionListener(l -> {
@@ -141,6 +154,19 @@ public class LibraryManagementSystem extends JFrame {
                 loginPanel.passwordField.setText("");
             }
         });
+    }
+
+    private void setActiveButton(JButton activeButton) {
+        // Reset all buttons to default color
+        btn1.setBackground(new Color(0, 172, 193));
+        btn2.setBackground(new Color(0, 172, 193));
+        btn3.setBackground(new Color(0, 172, 193));
+        btn4.setBackground(new Color(0, 172, 193));
+        btn5.setBackground(new Color(0, 172, 193));
+        btn6.setBackground(new Color(0, 172, 193));
+
+        // Set active button to darker color
+        activeButton.setBackground(new Color(0, 130, 150));
     }
 
     public JButton createButton(String text, Font font) {
