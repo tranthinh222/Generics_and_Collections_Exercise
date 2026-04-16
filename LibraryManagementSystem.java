@@ -23,6 +23,10 @@ public class LibraryManagementSystem extends JFrame {
     private StatisticsPanel statisticsPanel;
     private LibrarianManagement librarianManagement;
     private JButton btn1, btn2, btn3, btn4, btn5, btn6;
+    private JButton logoutButton;
+    private JLabel userLabel;
+    private boolean isLoggedIn = false;
+    private String currentUsername = "";
 
     public LibraryManagementSystem() {
         this.setTitle("Library Management System");
@@ -43,6 +47,25 @@ public class LibraryManagementSystem extends JFrame {
         label.setFont(new Font("Arial", Font.BOLD, 24));
         label.setForeground(Color.WHITE);
         headerPanel.add(label, BorderLayout.WEST);
+
+        JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        userPanel.setBackground(new Color(5, 148, 237));
+
+        userLabel = new JLabel("Not logged in");
+        userLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        userLabel.setForeground(Color.WHITE);
+        userPanel.add(userLabel);
+
+        logoutButton = new JButton("Logout");
+        logoutButton.setFont(new Font("Arial", Font.PLAIN, 11));
+        logoutButton.setBackground(new Color(231, 76, 60));
+        logoutButton.setForeground(Color.WHITE);
+        logoutButton.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
+        logoutButton.setFocusPainted(false);
+        logoutButton.setVisible(false);
+        userPanel.add(logoutButton);
+
+        headerPanel.add(userPanel, BorderLayout.EAST);
 
         JPanel menuPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -95,7 +118,12 @@ public class LibraryManagementSystem extends JFrame {
         librarianManagement = new LibrarianManagement();
         librarianManagement.loadLibrarianListFromFile();
 
-        // Set initial active button color
+        btn2.setEnabled(false);
+        btn3.setEnabled(false);
+        btn4.setEnabled(false);
+        btn5.setEnabled(false);
+        btn6.setEnabled(false);
+
         setActiveButton(btn1);
 
         btn1.addActionListener(l -> {
@@ -129,29 +157,75 @@ public class LibraryManagementSystem extends JFrame {
         });
 
         loginPanel.loginButton.addActionListener(l -> {
-            String name = loginPanel.getUsername();
-            String password = loginPanel.getPassword();
+            String name = loginPanel.getUsername().trim();
+            String password = loginPanel.getPassword().trim();
 
             loginPanel.clearError();
 
             if (name.isEmpty()) {
                 loginPanel.showError("Username không được trống!");
+                return;
             }
 
-            if (password.isEmpty())
+            if (password.isEmpty()) {
                 loginPanel.showError("Password không được trống!");
+                return;
+            }
 
-            if (password.length() < 6)
+            if (password.length() < 6) {
                 loginPanel.showError("Password phải >= 6 ký tự!");
+                return;
+            }
+
+            // Reload file mỗi lần login để lấy account mới tạo
+            librarianManagement.loadLibrarianListFromFile();
 
             if (librarianManagement.checkValidAccount(name, password)) {
-                this.remove(btn1);
+                isLoggedIn = true;
+                currentUsername = name;
+
+                btn1.setVisible(false);
+                userLabel.setText("👤 " + name);
+                logoutButton.setVisible(true);
+
+                btn2.setEnabled(true);
+                btn3.setEnabled(true);
+                btn4.setEnabled(true);
+                btn5.setEnabled(true);
+                btn6.setEnabled(true);
+
                 JOptionPane.showMessageDialog(this, "Đăng nhập thành công!", "Thành công",
                         JOptionPane.INFORMATION_MESSAGE);
+
+                setActiveButton(btn2);
+                readerManagementPanel.loadTableData();
+                cardLayout.show(contentPanel, "Readers");
             } else {
                 loginPanel.showError("Username hoặc password không đúng!");
             }
+        });
 
+        logoutButton.addActionListener(e -> {
+            isLoggedIn = false;
+            currentUsername = "";
+
+            btn1.setVisible(true);
+            userLabel.setText("Not logged in");
+            logoutButton.setVisible(false);
+
+            btn2.setEnabled(false);
+            btn3.setEnabled(false);
+            btn4.setEnabled(false);
+            btn5.setEnabled(false);
+            btn6.setEnabled(false);
+
+            loginPanel.clearLoginForm();
+
+            setActiveButton(btn1);
+            cardLayout.show(contentPanel, "Login");
+
+            JOptionPane.showMessageDialog(this, "Logged out successfully!", "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
         });
 
         loginPanel.createdButton.addActionListener(e -> {
@@ -165,15 +239,12 @@ public class LibraryManagementSystem extends JFrame {
     }
 
     private void setActiveButton(JButton activeButton) {
-        // Reset all buttons to default color
         btn1.setBackground(new Color(0, 172, 193));
         btn2.setBackground(new Color(0, 172, 193));
         btn3.setBackground(new Color(0, 172, 193));
         btn4.setBackground(new Color(0, 172, 193));
         btn5.setBackground(new Color(0, 172, 193));
         btn6.setBackground(new Color(0, 172, 193));
-
-        // Set active button to darker color
         activeButton.setBackground(new Color(0, 130, 150));
     }
 

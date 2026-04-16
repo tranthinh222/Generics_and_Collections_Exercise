@@ -205,10 +205,8 @@ public class ReturnManagementPanel extends JPanel {
         borrowRecordManagement.loadRecordsFromFile();
         filteredRecords.clear();
 
-        // Get selected filter
         String selectedFilter = (String) statusFilter.getSelectedItem();
 
-        // Filter records based on selected status
         for (BorrowRecord record : borrowRecordManagement.getRecords()) {
             if (selectedFilter.equals("All") || record.getStatus().equals(selectedFilter)) {
                 filteredRecords.add(record);

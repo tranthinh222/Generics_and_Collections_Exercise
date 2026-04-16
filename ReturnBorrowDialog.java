@@ -92,7 +92,6 @@ public class ReturnBorrowDialog extends JDialog {
 
         booksPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Missing books panel
         JPanel missingPanel = new JPanel(new BorderLayout());
         missingPanel.setBackground(Color.WHITE);
         missingPanel.setBorder(BorderFactory.createTitledBorder("Sách Bị Mất"));
@@ -122,7 +121,6 @@ public class ReturnBorrowDialog extends JDialog {
         missingPanel.add(missingScrollPane, BorderLayout.CENTER);
         missingPanel.add(missingButtonPanel, BorderLayout.SOUTH);
 
-        // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setBackground(Color.WHITE);
 
@@ -141,7 +139,6 @@ public class ReturnBorrowDialog extends JDialog {
         buttonPanel.add(submitButton);
         buttonPanel.add(cancelButton);
 
-        // Add panels to main
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBackground(Color.WHITE);
         centerPanel.add(booksPanel, BorderLayout.NORTH);
@@ -153,7 +150,6 @@ public class ReturnBorrowDialog extends JDialog {
 
         this.add(mainPanel);
 
-        // Event listeners
         markMissingButton.addActionListener(e -> {
             int selectedIndex = missingList.getSelectedIndex();
             if (selectedIndex != -1) {
@@ -171,7 +167,6 @@ public class ReturnBorrowDialog extends JDialog {
         });
 
         submitButton.addActionListener(e -> {
-            // Calculate penalty
             long overduePenalty = record.calculateOverduePenalty();
             long missingPenalty = calculateMissingPenalty();
             long totalPenalty = overduePenalty + missingPenalty;

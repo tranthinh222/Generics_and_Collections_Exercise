@@ -1,0 +1,2 @@
+tran thinh|123456
+admin|admin123

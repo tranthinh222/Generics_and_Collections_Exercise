@@ -48,7 +48,7 @@ public class StatisticsPanel extends JPanel {
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        JButton refreshButton = new JButton("Làm Mới");
+        JButton refreshButton = new JButton("Refresh");
         refreshButton.setFont(new Font("Arial", Font.BOLD, 12));
         refreshButton.setBackground(new Color(0, 172, 193));
         refreshButton.setForeground(Color.WHITE);

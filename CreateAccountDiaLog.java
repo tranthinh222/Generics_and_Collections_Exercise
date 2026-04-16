@@ -9,14 +9,13 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class CreateAccountDiaLog extends JDialog{
+public class CreateAccountDiaLog extends JDialog {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JPasswordField confirmPasswordField;
@@ -24,8 +23,8 @@ public class CreateAccountDiaLog extends JDialog{
     private JButton canceledButton;
     private JLabel errorJLabel;
     private boolean isCreated = false;
-    
-    public CreateAccountDiaLog(){
+
+    public CreateAccountDiaLog() {
         this.setTitle("Create Account");
         this.setSize(500, 380);
         this.setModal(true);
@@ -57,14 +56,13 @@ public class CreateAccountDiaLog extends JDialog{
         panel.add(Box.createVerticalStrut(8));
 
         this.passwordField = new JPasswordField(30);
-        panel.add(createRow("Password:", this.passwordField, labelFont, inputFont));
+        panel.add(createRowWithToggle("Password:", this.passwordField, labelFont, inputFont));
         panel.add(Box.createVerticalStrut(8));
 
         this.confirmPasswordField = new JPasswordField(30);
-        panel.add(createRow("Confirm password:", this.confirmPasswordField, labelFont, inputFont));
+        panel.add(createRowWithToggle("Confirm password:", this.confirmPasswordField, labelFont, inputFont));
         panel.add(Box.createVerticalStrut(8));
 
-        
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setMaximumSize(new Dimension(360, 35));
@@ -73,11 +71,10 @@ public class CreateAccountDiaLog extends JDialog{
         this.canceledButton = this.createButton("Cancel");
         buttonPanel.add(createdButton);
         buttonPanel.add(canceledButton);
-        
 
         panel.add(buttonPanel);
         this.add(panel);
-        this.createdButton.addActionListener(l ->{
+        this.createdButton.addActionListener(l -> {
             this.checkValidInformationAndCreate();
         });
 
@@ -88,7 +85,7 @@ public class CreateAccountDiaLog extends JDialog{
 
     }
 
-    public JButton createButton(String text){
+    public JButton createButton(String text) {
         JButton btn = new JButton();
         btn.setText(text);
         btn.setFont(new Font("Arial", Font.BOLD, 12));
@@ -98,100 +95,141 @@ public class CreateAccountDiaLog extends JDialog{
         btn.setFocusPainted(false);
 
         return btn;
-    } 
+    }
 
-    public JPanel createRow(String textLabel, JTextField textField, Font labelFont, Font inputFont){
+    public JPanel createRow(String textLabel, JTextField textField, Font labelFont, Font inputFont) {
         JPanel row = new JPanel();
         row.setLayout(new BorderLayout(20, 0));
         row.setBackground(Color.WHITE);
-    
+
         JLabel label = new JLabel();
         label.setText(textLabel);
         label.setFont(labelFont);
         label.setForeground(Color.BLACK);
         label.setPreferredSize(new Dimension(140, 26));
         textField.setBorder(BorderFactory.createLineBorder(new Color(5, 148, 237), 1));
+        textField.enableInputMethods(false);
         row.add(label, BorderLayout.WEST);
         row.add(textField, BorderLayout.CENTER);
         row.setMaximumSize(new Dimension(360, 35));
         return row;
     }
-    
-    public String getUsername(){
+
+    public JPanel createRowWithToggle(String textLabel, JPasswordField passwordField, Font labelFont, Font inputFont) {
+        JPanel row = new JPanel();
+        row.setLayout(new BorderLayout(20, 0));
+        row.setBackground(Color.WHITE);
+
+        JLabel label = new JLabel();
+        label.setText(textLabel);
+        label.setFont(labelFont);
+        label.setForeground(Color.BLACK);
+        label.setPreferredSize(new Dimension(140, 26));
+
+        passwordField.setBorder(BorderFactory.createLineBorder(new Color(5, 148, 237), 1));
+        passwordField.enableInputMethods(false);
+
+        JButton togglePasswordBtn = new JButton("show");
+        togglePasswordBtn.setFont(new Font("Arial", Font.PLAIN, 11));
+        togglePasswordBtn.setPreferredSize(new Dimension(45, 25));
+        togglePasswordBtn.setBackground(new Color(255, 255, 255));
+        togglePasswordBtn.setForeground(new Color(5, 148, 237));
+        togglePasswordBtn.setBorder(BorderFactory.createEmptyBorder());
+        togglePasswordBtn.setFocusPainted(false);
+        togglePasswordBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        togglePasswordBtn.setContentAreaFilled(false);
+        togglePasswordBtn.setOpaque(false);
+
+        final boolean[] isPasswordVisible = { false };
+        togglePasswordBtn.addActionListener(e -> {
+            if (isPasswordVisible[0]) {
+                passwordField.setEchoChar('●');
+                togglePasswordBtn.setText("show");
+                isPasswordVisible[0] = false;
+            } else {
+                passwordField.setEchoChar('\u0000');
+                togglePasswordBtn.setText("hide");
+                isPasswordVisible[0] = true;
+            }
+        });
+
+        JPanel passwordFieldPanel = new JPanel();
+        passwordFieldPanel.setBackground(Color.WHITE);
+        passwordFieldPanel.setLayout(new BorderLayout(5, 0));
+        passwordFieldPanel.add(passwordField, BorderLayout.CENTER);
+        passwordFieldPanel.add(togglePasswordBtn, BorderLayout.EAST);
+
+        row.add(label, BorderLayout.WEST);
+        row.add(passwordFieldPanel, BorderLayout.CENTER);
+        row.setMaximumSize(new Dimension(360, 35));
+        return row;
+    }
+
+    public String getUsername() {
         return this.usernameField.getText();
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return new String(this.passwordField.getPassword());
     }
 
-    public String getConfirmPassword(){
+    public String getConfirmPassword() {
         return new String(this.confirmPasswordField.getPassword());
     }
 
-    public void setCreated(boolean created){
+    public void setCreated(boolean created) {
         this.isCreated = created;
     }
 
-    public boolean isCreated(){
+    public boolean isCreated() {
         return this.isCreated;
     }
 
-    public void showError(String message){
+    public void showError(String message) {
         this.errorJLabel.setText(message);
     }
 
-    public void clearError(){
+    public void clearError() {
         this.errorJLabel.setText("");
     }
 
-
-    public void checkValidInformationAndCreate(){
-        String username = this.getUsername();
-        String password = this.getPassword();
-        String confirmPassword = this.getConfirmPassword();
+    public void checkValidInformationAndCreate() {
+        String username = this.getUsername().trim();
+        String password = this.getPassword().trim();
+        String confirmPassword = this.getConfirmPassword().trim();
         LibrarianManagement librarianManagement = new LibrarianManagement();
         librarianManagement.loadLibrarianListFromFile();
 
-        if (username == null)
-        {
+        if (username == null) {
             this.showError("Username không được trống!");
             return;
         }
-            
 
-        if (password == null)
-        {
+        if (password == null) {
             this.showError("Password không được trống!");
             return;
         }
-            
 
-        if (password.length() < 6)
-        {
+        if (password.length() < 6) {
             this.showError("Password phải >= 6 ký tự!");
             return;
         }
-            
 
-        if (confirmPassword == null)
-        {
+        if (confirmPassword == null) {
             this.showError("Confirm Password không được trống!");
             return;
         }
 
-        if (password.equals(confirmPassword))
-        {
+        if (!password.equals(confirmPassword)) {
             this.showError("Password và Confirm Password không giống nhau!");
             return;
         }
-            
-        if (librarianManagement.isDuplicatedAccount(username, password))
-        {
+
+        if (librarianManagement.isDuplicatedAccount(username, password)) {
             this.showError("Tên tài khoản đã tồn tại");
             return;
         }
-            
+
         this.isCreated = true;
         librarianManagement.addLibrarian(username, password);
         librarianManagement.saveLibrarianListToFile();
@@ -201,18 +239,18 @@ public class CreateAccountDiaLog extends JDialog{
     }
 
     // public static void main(String[] args) {
-    //     javax.swing.SwingUtilities.invokeLater(() -> {
-    //         JFrame frame = new JFrame("Preview - CreateAccountDiaLog");
-    //         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    //         frame.setSize(new Dimension(600, 400));
-    //         frame.setLocationRelativeTo(null);
-    //         frame.getContentPane().setBackground(Color.WHITE);
-    //         frame.setVisible(true);
+    // javax.swing.SwingUtilities.invokeLater(() -> {
+    // JFrame frame = new JFrame("Preview - CreateAccountDiaLog");
+    // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // frame.setSize(new Dimension(600, 400));
+    // frame.setLocationRelativeTo(null);
+    // frame.getContentPane().setBackground(Color.WHITE);
+    // frame.setVisible(true);
 
-    //         CreateAccountDiaLog dialog = new CreateAccountDiaLog();
-    //         dialog.setModal(false);
-    //         dialog.setLocationRelativeTo(frame);
-    //         dialog.setVisible(true);
-    //     });
+    // CreateAccountDiaLog dialog = new CreateAccountDiaLog();
+    // dialog.setModal(false);
+    // dialog.setLocationRelativeTo(frame);
+    // dialog.setVisible(true);
+    // });
     // }
 }
